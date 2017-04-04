@@ -1,0 +1,13 @@
+*.pyc
+.DS_Store
+*.log
+.idea/
+._appunti
+.Spotlight-V100
+._*
+.DS_Store?
+.Trashes
+ehthumbs.db
+Thumbs.db
+._.DS_Store
+node_modules/

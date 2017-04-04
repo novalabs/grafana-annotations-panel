@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/module.js"],"names":["AnnotationsCtrl"],"mappings":";;;;;;;;AAAQA,qB,qBAAAA,e;;;2BAGNA,e","file":"module.js","sourcesContent":["import {AnnotationsCtrl} from './annotations_ctrl';\n\nexport {\n  AnnotationsCtrl as PanelCtrl\n};\n"]}

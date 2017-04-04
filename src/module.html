@@ -1,0 +1,29 @@
+<div class="annotations-panel">
+
+    <div class="gf-form">
+        <label class="gf-form-label width-8">Timestamp</label>
+        <input type="text" class="input-small gf-form-input width-16" ng-model="ctrl.annotation.timestamp" ng-change="ctrl.onFieldChange()" placeholder="empty for now" ng-model-onblur />
+        <!-- <button type="button" class="btn gf-form-btn width-4 btn-success" ng-click="ctrl.setNow()">Now</button> -->
+    </div>
+
+    <div class="gf-form">
+        <label class="gf-form-label width-8">Title</label>
+        <input type="text" class="input-small gf-form-input width-16" ng-model="ctrl.annotation.title" ng-change="ctrl.onFieldChange()" placeholder="my annotation title" ng-model-onblur />
+    </div>
+
+    <div class="gf-form">
+        <label class="gf-form-label width-8">Tags</label>
+        <input type="text" class="input-small gf-form-input width-16" ng-model="ctrl.annotation.tags" ng-change="ctrl.onFieldChange()" placeholder="danger,overheating" ng-model-onblur />
+    </div>
+
+    <div class="gf-form">
+        <label class="gf-form-label width-8">Text</label>
+        <input type="text" class="input-small gf-form-input width-16" ng-model="ctrl.annotation.text" ng-change="ctrl.onFieldChange()" placeholder="my annotation description" ng-model-onblur />
+    </div>
+
+    <div class="gf-form-button-row">
+        <button type="submit" class="btn btn-success" ng-click="ctrl.onSubmit()">Save Annotation</button>
+    </div>
+
+
+</div>

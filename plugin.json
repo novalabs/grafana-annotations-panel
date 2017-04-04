@@ -1,0 +1,33 @@
+{
+  "type": "panel",
+  "name": "Annotation Panel",
+  "id": "novalabs-annotations-panel",
+
+  "info": {
+    "description": "Annotations panel for Grafana",
+    "author": {
+      "name": "Nova Labs",
+      "url": "http://novalabs.io"
+    },
+    "keywords": ["annotation", "panel", "annotations"],
+    "logos": {
+      "small": "img/annotations_logo_small.png",
+      "large": "img/annotations_logo_large.png"
+    },
+    "links": [
+      {"name": "Project site", "url": "https://github.com/novalabs/annotations-panel"},
+      {"name": "MIT License",  "url": "https://github.com/novalabs/annotations-panel/LICENSE"}
+    ],
+    "screenshots": [
+      { "name": "Panel", "path": "img/screenshot1.png" },
+      { "name": "Option Editor", "path": "img/screenshot2.png"}
+    ],
+    "version": "0.0.1",
+    "updated": "2017-04-04"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "3.x.x",
+    "plugins": [ ]
+  }
+}
