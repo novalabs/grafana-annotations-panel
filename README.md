@@ -5,10 +5,10 @@ This Grafana panel lets you save annotations in InfluxDB database
 ### Screenshots
 
 Panel
-![Panel](https://github.com/novalabs/annotations-panel/src/img/screenshot1.png)
+![Panel](https://github.com/novalabs/annotations-panel/blob/master/src/img/screenshot1.png)
 
 Option Editor
-![Options Editor](https://github.com/novalabs/annotations-panel/src/img/screenshot2.png)
+![Options Editor](https://github.com/novalabs/annotations-panel/blob/master/src/img/screenshot2.png)
 
 ### Compatibility
 
