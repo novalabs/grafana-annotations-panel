@@ -18,14 +18,14 @@ module.exports = function(grunt) {
       },
       pluginDef: {
         expand: true,
-        src: [ 'plugin.json', 'README.md' ],
+        src: [ 'README.md' ],
         dest: 'dist',
       }
     },
 
     watch: {
       rebuild_all: {
-        files: ['src/**/*', 'plugin.json'],
+        files: ['src/**/*'],
         tasks: ['default'],
         options: {spawn: false}
       },
@@ -51,4 +51,5 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['clean', 'copy:src_to_dist', 'copy:pluginDef', 'babel']);
+
 };

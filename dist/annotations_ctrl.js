@@ -69,8 +69,6 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                 text: ""
             };
             editorDefaults = {
-                datasources: ["influxdb"],
-                datasource: "influxdb",
                 measurement: "events",
                 tagsColumn: "tags",
                 textColumn: "text",
@@ -80,7 +78,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
             _export('AnnotationsCtrl', AnnotationsCtrl = function (_PanelCtrl) {
                 _inherits(AnnotationsCtrl, _PanelCtrl);
 
-                function AnnotationsCtrl($scope, $injector, $http, datasourceSrv) {
+                function AnnotationsCtrl($scope, $injector, $http, datasourceSrv, backendSrv, alertSrv) {
                     _classCallCheck(this, AnnotationsCtrl);
 
                     var _this = _possibleConstructorReturn(this, (AnnotationsCtrl.__proto__ || Object.getPrototypeOf(AnnotationsCtrl)).call(this, $scope, $injector));
@@ -90,10 +88,17 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                     _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
                     _this.events.on('panel-teardown', _this.onPanelTeardown.bind(_this));
 
+                    _this.alertSrv = alertSrv;
+                    _this.backendSrv = backendSrv;
                     _this.datasourceSrv = datasourceSrv;
                     _this.$http = $http;
 
-                    console.log(annotationDefaults);
+                    // get influx datasources
+                    _this.backendSrv.get('/api/datasources').then(function (result) {
+                        _this.availableDatasources = _.filter(result, { "type": "influxdb" });
+                        _this.selectedDatasource = _this.availableDatasources[1];
+                    });
+
                     _this.annotation = annotationDefaults;
                     _this.editor = editorDefaults;
 
@@ -127,7 +132,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
 
                         console.log("WRITE", query);
                         this.error = null;
-                        return this.datasourceSrv.get(this.panel.datasource).then(function (ds) {
+                        return this.datasourceSrv.get(this.selectedDatasource.name).then(function (ds) {
                             _this2.$http({
                                 url: ds.urls[0] + '/write?db=' + ds.database,
                                 method: 'POST',
@@ -136,10 +141,12 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                                     "Content-Type": "plain/text"
                                 }
                             }).then(function (rsp) {
-                                console.log("OK", rsp);
+                                console.log("Annotation saved", rsp);
+                                _this2.alertSrv.set('Saved', 'Successfully saved the annotation', 'success', 3000);
                             }, function (err) {
                                 console.log("ERROR", err);
                                 _this2.error = err.data.error + " [" + err.status + "]";
+                                _this2.alertSrv.set('Oops', 'Something went wrong: ' + _this2.error, 'error', 6000);
                             });
                         });
                     }
@@ -156,7 +163,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                 }, {
                     key: 'onInitEditMode',
                     value: function onInitEditMode() {
-                        this.addEditorTab('Annotations_Options', 'public/plugins/novalabs-annotations-panel/editor.html', 2);
+                        this.addEditorTab('Annotations Options', 'public/plugins/novalabs-annotations-panel/editor.html', 2);
                     }
                 }, {
                     key: 'onPanelTeardown',

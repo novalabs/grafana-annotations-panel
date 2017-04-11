@@ -1,18 +1,19 @@
 ## Annotations Panel for Grafana
 
-This Grafana panel lets you save annotations in InfluxDB database
+This Grafana panel lets you save annotations in InfluxDB database.
+It provide a way to mark points on the graph. These points are displayable with [InfluxDB Annotations feature](http://docs.grafana.org/reference/annotations/#influxdb-annotations).
 
 ### Screenshots
 
 Panel
-![Panel](https://github.com/novalabs/annotations-panel/src/img/screenshot1.png)
+![Panel](https://raw.githubusercontent.com/novalabs/grafana-annotations-panel/master/src/img/screenshot1.png)
 
 Option Editor
-![Options Editor](https://github.com/novalabs/annotations-panel/src/img/screenshot2.png)
+![Options Editor](https://raw.githubusercontent.com/novalabs/grafana-annotations-panel/master/src/img/screenshot2.png)
 
-### Compatibility
+### Features
 
-Actually this panel works only with the following data sources: [InfluxDB](https://grafana.com/plugins/influxdb)
+Actually this panel works only with [InfluxDB](https://grafana.com/plugins/influxdb) data sources.
 
 ### Changelog
 

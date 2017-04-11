@@ -8,7 +8,7 @@
 				<div class="gf-form">
 					<span class="gf-form-label max-width-10">Datasource</span>
 					<div class="gf-form-select-wrapper">
-						<select class="gf-form-input gf-size-auto" ng-model="ctrl.editor.datasource" ng-options="f for f in ctrl.editor.datasources"></select>
+						<select class="gf-form-input gf-size-auto" ng-model="ctrl.selectedDatasource" ng-options="f.name for f in ctrl.availableDatasources"></select>
 					</div>
 				</div>
 

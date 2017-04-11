@@ -13,8 +13,6 @@ const annotationDefaults = {
 
 
 const editorDefaults = {
-    datasources: ["influxdb"],
-    datasource: "influxdb",
     measurement: "events",
     tagsColumn: "tags",
     textColumn: "text",
@@ -24,18 +22,25 @@ const editorDefaults = {
 
 export class AnnotationsCtrl extends PanelCtrl {
 
-    constructor($scope, $injector, $http, datasourceSrv) {
+    constructor($scope, $injector, $http, datasourceSrv, backendSrv, alertSrv) {
         super($scope, $injector);
         _.defaults(this.panel, annotationDefaults, editorDefaults);
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('panel-teardown', this.onPanelTeardown.bind(this));
 
+        this.alertSrv = alertSrv;
+        this.backendSrv = backendSrv;
         this.datasourceSrv = datasourceSrv;
         this.$http = $http;
 
+        // get influx datasources
+        this.backendSrv.get('/api/datasources')
+            .then((result) => {
+                this.availableDatasources = _.filter(result, {"type": "influxdb"});
+                this.selectedDatasource = this.availableDatasources[1];
+            });
 
-        console.log(annotationDefaults);
         this.annotation = annotationDefaults;
         this.editor = editorDefaults;
 
@@ -62,7 +67,7 @@ export class AnnotationsCtrl extends PanelCtrl {
     writeData(query) {
         console.log( "WRITE", query );
         this.error = null;
-        return this.datasourceSrv.get(this.panel.datasource).then( (ds) => {
+        return this.datasourceSrv.get(this.selectedDatasource.name).then( (ds) => {
             this.$http({
                 url: ds.urls[0] + '/write?db=' + ds.database,
                 method: 'POST',
@@ -71,10 +76,12 @@ export class AnnotationsCtrl extends PanelCtrl {
                     "Content-Type": "plain/text"
                 }
             }).then((rsp) => {
-                console.log( "OK", rsp );
+                console.log( "Annotation saved", rsp );
+                this.alertSrv.set('Saved', 'Successfully saved the annotation', 'success', 3000);
             }, err => {
                 console.log( "ERROR", err );
                 this.error = err.data.error + " ["+err.status+"]";
+                this.alertSrv.set('Oops', 'Something went wrong: '+this.error, 'error', 6000);
             });
         });
     }
@@ -88,7 +95,7 @@ export class AnnotationsCtrl extends PanelCtrl {
     }
 
     onInitEditMode() {
-        this.addEditorTab('Annotations_Options', 'public/plugins/novalabs-annotations-panel/editor.html', 2);
+        this.addEditorTab('Annotations Options', 'public/plugins/novalabs-annotations-panel/editor.html', 2);
     }
 
     onPanelTeardown() {
