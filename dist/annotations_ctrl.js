@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.css!', 'angular'], function (_export, _context) {
+System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.css!', 'angular', 'moment', './input_datetime'], function (_export, _context) {
     "use strict";
 
-    var config, PanelCtrl, angular, _createClass, annotationDefaults, editorDefaults, AnnotationsCtrl;
+    var config, PanelCtrl, angular, moment, inputDatetimeDirective, _createClass, moduleDefaults, editorDefaults, AnnotationsCtrl;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -42,6 +42,10 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
             PanelCtrl = _appPluginsSdk.PanelCtrl;
         }, function (_cssAnnotationsPanelCss) {}, function (_angular) {
             angular = _angular.default;
+        }, function (_moment) {
+            moment = _moment.default;
+        }, function (_input_datetime) {
+            inputDatetimeDirective = _input_datetime.inputDatetimeDirective;
         }],
         execute: function () {
             _createClass = function () {
@@ -62,8 +66,8 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                 };
             }();
 
-            annotationDefaults = {
-                timestamp: "",
+            moduleDefaults = {
+                time: "",
                 title: "",
                 tags: "",
                 text: ""
@@ -83,7 +87,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
 
                     var _this = _possibleConstructorReturn(this, (AnnotationsCtrl.__proto__ || Object.getPrototypeOf(AnnotationsCtrl)).call(this, $scope, $injector));
 
-                    _.defaults(_this.panel, annotationDefaults, editorDefaults);
+                    _.defaults(_this.panel, moduleDefaults, editorDefaults);
 
                     _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
                     _this.events.on('panel-teardown', _this.onPanelTeardown.bind(_this));
@@ -99,7 +103,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                         _this.selectedDatasource = _this.availableDatasources[1];
                     });
 
-                    _this.annotation = annotationDefaults;
+                    _this.module = moduleDefaults;
                     _this.editor = editorDefaults;
 
                     return _this;
@@ -115,15 +119,18 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                 }, {
                     key: 'buildQuery',
                     value: function buildQuery() {
-                        // timestamp
-                        var timestamp = this.annotation.timestamp;
-                        if (timestamp == "") {
-                            timestamp = this.getNow();
-                        }
-                        // tags
-                        var tags = this.annotation.tags.replace(/,/g, "\\,");
 
-                        return "" + this.editor.measurement + "," + this.editor.tagsColumn + "=" + tags + " " + this.editor.titleColumn + "=\"" + this.annotation.title + "\"," + this.editor.textColumn + "=\"" + this.annotation.text + "\" " + timestamp;
+                        // timestamp
+                        var timestamp = "";
+                        if (this.module.time != "" && typeof this.module.time != 'undefined') {
+                            var js = this.getMoment(this.module.time);
+                            timestamp = this.getInfluxTimestamp(js);
+                        }
+
+                        // tags
+                        var tags = this.module.tags.replace(/,/g, "\\,");
+
+                        return "" + this.editor.measurement + "," + this.editor.tagsColumn + "=" + tags + " " + this.editor.titleColumn + "=\"" + this.module.title + "\"," + this.editor.textColumn + "=\"" + this.module.text + "\" " + timestamp;
                     }
                 }, {
                     key: 'writeData',
@@ -151,14 +158,27 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                         });
                     }
                 }, {
-                    key: 'setNow',
-                    value: function setNow() {
-                        this.annotation.timestamp = this.getNow();
+                    key: 'changeTime',
+                    value: function changeTime() {
+                        var picked = this.dashboard.isTimezoneUtc() ? moment().utc(this.datapicked) : moment(this.datapicked);
+
+                        // set current time to picked date
+                        var now = this.dashboard.isTimezoneUtc() ? moment().utc() : moment();
+                        picked = picked.hour(now.get('hour'));
+                        picked = picked.minute(now.get('minute'));
+                        picked = picked.second(now.get('second'));
+
+                        this.module.time = picked.format("YYYY-MM-DD HH:mm:ss");
                     }
                 }, {
-                    key: 'getNow',
-                    value: function getNow() {
-                        return new Date().getTime() * 1000000;
+                    key: 'getMoment',
+                    value: function getMoment(jsDate) {
+                        return this.dashboard.isTimezoneUtc() ? moment.utc(jsDate) : moment(jsDate);
+                    }
+                }, {
+                    key: 'getInfluxTimestamp',
+                    value: function getInfluxTimestamp(jsDate) {
+                        return jsDate.valueOf() * 1000000;
                     }
                 }, {
                     key: 'onInitEditMode',
@@ -178,6 +198,8 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
             _export('AnnotationsCtrl', AnnotationsCtrl);
 
             AnnotationsCtrl.templateUrl = 'module.html';
+
+            angular.module("grafana.directives").directive('inputSimpleDatetime', inputDatetimeDirective);
         }
     };
 });

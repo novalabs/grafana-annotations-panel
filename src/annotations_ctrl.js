@@ -2,16 +2,19 @@ import config from 'app/core/config';
 import {PanelCtrl} from 'app/plugins/sdk';
 import './css/annotations-panel.css!';
 import angular from 'angular';
+import moment from 'moment';
 
 
-const annotationDefaults = {
-    timestamp: "",
+// module.html default fields
+const moduleDefaults = {
+    time: "",
     title: "",
     tags: "",
     text: "",
 };
 
 
+// editor.html default fields
 const editorDefaults = {
     measurement: "events",
     tagsColumn: "tags",
@@ -24,7 +27,7 @@ export class AnnotationsCtrl extends PanelCtrl {
 
     constructor($scope, $injector, $http, datasourceSrv, backendSrv, alertSrv) {
         super($scope, $injector);
-        _.defaults(this.panel, annotationDefaults, editorDefaults);
+        _.defaults(this.panel, moduleDefaults, editorDefaults);
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('panel-teardown', this.onPanelTeardown.bind(this));
@@ -41,10 +44,11 @@ export class AnnotationsCtrl extends PanelCtrl {
                 this.selectedDatasource = this.availableDatasources[1];
             });
 
-        this.annotation = annotationDefaults;
+        this.module = moduleDefaults;
         this.editor = editorDefaults;
 
     }
+
 
     onSubmit() {
         var query = this.buildQuery();
@@ -52,17 +56,22 @@ export class AnnotationsCtrl extends PanelCtrl {
         this.writeData(query);
     }
 
-    buildQuery() {
-        // timestamp
-        var timestamp = this.annotation.timestamp;
-        if(timestamp == "") {
-            timestamp = this.getNow();
-        }
-        // tags
-        var tags = this.annotation.tags.replace(/,/g, "\\,");
 
-        return "" + this.editor.measurement + "," + this.editor.tagsColumn + "=" + tags + " " + this.editor.titleColumn + "=\"" + this.annotation.title + "\"," + this.editor.textColumn + "=\"" + this.annotation.text + "\" " + timestamp;
+    buildQuery() {
+
+        // timestamp
+        var timestamp = "";
+        if(this.module.time != "" && typeof this.module.time != 'undefined') {
+            var js = this.getMoment(this.module.time);
+            timestamp = this.getInfluxTimestamp(js);
+        }
+
+        // tags
+        var tags = this.module.tags.replace(/,/g, "\\,");
+
+        return "" + this.editor.measurement + "," + this.editor.tagsColumn + "=" + tags + " " + this.editor.titleColumn + "=\"" + this.module.title + "\"," + this.editor.textColumn + "=\"" + this.module.text + "\" " + timestamp;
     }
+
 
     writeData(query) {
         console.log( "WRITE", query );
@@ -86,21 +95,44 @@ export class AnnotationsCtrl extends PanelCtrl {
         });
     }
 
-    setNow() {
-        this.annotation.timestamp = this.getNow();
+
+    changeTime() {
+        var picked = this.dashboard.isTimezoneUtc() ? moment().utc(this.datapicked) : moment(this.datapicked);
+
+        // set current time to picked date
+        var now = this.dashboard.isTimezoneUtc() ? moment().utc() : moment();
+        picked = picked.hour(now.get('hour'));
+        picked = picked.minute(now.get('minute'));
+        picked = picked.second(now.get('second'));
+
+        this.module.time = picked.format("YYYY-MM-DD HH:mm:ss");
     }
 
-    getNow() {
-        return new Date().getTime()*1000000;
+
+    getMoment(jsDate) {
+        return this.dashboard.isTimezoneUtc() ? moment.utc(jsDate) : moment(jsDate);
     }
+
+
+    getInfluxTimestamp(jsDate) {
+        return jsDate.valueOf()*1000000;
+    }
+
 
     onInitEditMode() {
         this.addEditorTab('Annotations Options', 'public/plugins/novalabs-annotations-panel/editor.html', 2);
     }
 
+
     onPanelTeardown() {
         this.$timeout.cancel(this.nextTickPromise);
     }
+
+
 }
 
+
 AnnotationsCtrl.templateUrl = 'module.html';
+
+import {inputDatetimeDirective} from './input_datetime';
+angular.module("grafana.directives").directive('inputSimpleDatetime', inputDatetimeDirective);

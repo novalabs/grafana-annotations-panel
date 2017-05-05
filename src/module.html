@@ -1,29 +1,43 @@
 <div class="annotations-panel">
+    <form name="timeForm">
 
-    <div class="gf-form">
-        <label class="gf-form-label width-8">Timestamp</label>
-        <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.annotation.timestamp" ng-change="ctrl.onFieldChange()" placeholder="empty for 'now'" ng-model-onblur />
-        <!-- <button type="button" class="btn gf-form-btn width-4 btn-success" ng-click="ctrl.setNow()">Now</button> -->
-    </div>
+        <div class="gf-form">
+            <label class="gf-form-label width-8">Time</label>
+            <div class="gf-form-inline">
+                <div class="gf-form width-auto">
+                    <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.module.time" placeholder="empty for 'now'" input-simple-datetime >
+                </div>
+                <div class="gf-form">
+                    <button class="btn gf-form-btn btn-primary" type="button" ng-click="openToPicker=!openToPicker">
+                        <i class="fa fa-calendar"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <div class="gf-form">
-        <label class="gf-form-label width-8">Title</label>
-        <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.annotation.title" ng-change="ctrl.onFieldChange()" placeholder="my annotation title" ng-model-onblur />
-    </div>
+        <div ng-if="openToPicker">
+            <datepicker ng-model="ctrl.datapicked" class="gf-timepicker-component" show-weeks="false" starting-day="ctrl.firstDayOfWeek" ng-change="ctrl.changeTime()"></datepicker>
+        </div>
 
-    <div class="gf-form">
-        <label class="gf-form-label width-8">Tags</label>
-        <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.annotation.tags" ng-change="ctrl.onFieldChange()" placeholder="danger,overheating" ng-model-onblur />
-    </div>
+        <div class="gf-form">
+            <label class="gf-form-label width-8">Title</label>
+            <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.module.title" ng-change="ctrl.onFieldChange()" placeholder="my annotation title" ng-model-onblur />
+        </div>
 
-    <div class="gf-form">
-        <label class="gf-form-label width-8">Text</label>
-        <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.annotation.text" ng-change="ctrl.onFieldChange()" placeholder="my annotation description" ng-model-onblur />
-    </div>
+        <div class="gf-form">
+            <label class="gf-form-label width-8">Tags</label>
+            <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.module.tags" ng-change="ctrl.onFieldChange()" placeholder="danger,overheating" ng-model-onblur />
+        </div>
 
-    <div class="gf-form-button-row">
-        <button type="submit" class="btn btn-success" ng-click="ctrl.onSubmit()">Save Annotation</button>
-    </div>
+        <div class="gf-form">
+            <label class="gf-form-label width-8">Text</label>
+            <input type="text" class="input-small gf-form-input width-auto" ng-model="ctrl.module.text" ng-change="ctrl.onFieldChange()" placeholder="my annotation description" ng-model-onblur />
+        </div>
+
+        <div class="gf-form-button-row">
+            <button type="submit" class="btn gf-form-btn btn-secondary" ng-click="ctrl.onSubmit();openToPicker=false;" ng-disabled="!timeForm.$valid">Save Annotation</button>
+        </div>
+    </form>
 
 
 </div>
