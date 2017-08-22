@@ -66,10 +66,22 @@ export class AnnotationsCtrl extends PanelCtrl {
             timestamp = this.getInfluxTimestamp(js);
         }
 
-        // tags
-        var tags = this.module.tags.replace(/,/g, "\\,");
+        var title = this.module.title || "my annotation";
+        var text = this.module.text || "no description";
 
-        return "" + this.editor.measurement + "," + this.editor.tagsColumn + "=" + tags + " " + this.editor.titleColumn + "=\"" + this.module.title + "\"," + this.editor.textColumn + "=\"" + this.module.text + "\" " + timestamp;
+        // tags
+        var tagsInQuery = "";
+        if(this.module.tags != "" && typeof this.module.tags != 'undefined') {
+            // replace ", "
+            var tags = this.module.tags.replace(/,\s/g, ",");
+            // replace ","
+            tags = tags.replace(/,/g, "\\,");
+            // replace " "
+            tags = tags.replace(/\s/g, "\\,");
+            tagsInQuery = "," + this.editor.tagsColumn + "=" + tags;
+        }
+        return "" + this.editor.measurement + tagsInQuery + " " + this.editor.titleColumn + "=\"" + title + "\"," + this.editor.textColumn + "=\"" + text + "\" " + timestamp;
+
     }
 
 
