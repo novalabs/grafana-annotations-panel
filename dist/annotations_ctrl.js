@@ -133,12 +133,8 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                         // tags
                         var tagsInQuery = "";
                         if (this.module.tags != "" && typeof this.module.tags != 'undefined') {
-                            // replace ", "
-                            var tags = this.module.tags.replace(/,\s/g, ",");
-                            // replace ","
-                            tags = tags.replace(/,/g, "\\,");
-                            // replace " "
-                            tags = tags.replace(/\s/g, "\\,");
+                            // replace ", " and "," and " "
+                            var tags = this.module.tags.replace(/,\s|,|\s/g, "\\,");
                             tagsInQuery = "," + this.editor.tagsColumn + "=" + tags;
                         }
                         return "" + this.editor.measurement + tagsInQuery + " " + this.editor.titleColumn + "=\"" + title + "\"," + this.editor.textColumn + "=\"" + text + "\" " + timestamp;
