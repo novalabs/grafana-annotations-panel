@@ -100,7 +100,7 @@ System.register(['app/core/config', 'app/plugins/sdk', './css/annotations-panel.
                     // get influx datasources
                     _this.backendSrv.get('/api/datasources').then(function (result) {
                         _this.availableDatasources = _.filter(result, { "type": "influxdb" });
-                        _this.selectedDatasource = _this.availableDatasources[1];
+                        _this.selectedDatasource = _this.availableDatasources[0];
                     });
 
                     _this.module = moduleDefaults;

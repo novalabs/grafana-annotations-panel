@@ -41,7 +41,7 @@ export class AnnotationsCtrl extends PanelCtrl {
         this.backendSrv.get('/api/datasources')
             .then((result) => {
                 this.availableDatasources = _.filter(result, {"type": "influxdb"});
-                this.selectedDatasource = this.availableDatasources[1];
+                this.selectedDatasource = this.availableDatasources[0];
             });
 
         this.module = moduleDefaults;
